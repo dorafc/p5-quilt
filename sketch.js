@@ -1,15 +1,22 @@
+// import Block from '/block.js'
+
 // dimensions of quilt
-const xBlockNum = 10;
-const yBlockNum = 12;
+const xBlockNum = 3;
+const yBlockNum = 3;
 
 // dimensions of block
-const blockDimension = 60;
+const blockDimension = 250;
 
-// allowed palette
+// allowed palette, currently limited to two colors
 const univPalette = ['#f5abcc', '#30c93b']
 
 // all blocks
 let quilt = [];
+
+// weights for each block type
+const weights = [1,1,1,1,1,1,1]
+// const weights = [1,0,0,5,5,0,0]
+// const weights = [1,1,1,0,0,0,1]
 
 function setup() {
   createCanvas(xBlockNum*blockDimension, yBlockNum*blockDimension);
@@ -17,106 +24,19 @@ function setup() {
   for(let i = 0; i < xBlockNum; i++){
     quilt[i] = new Array();
     for (let j = 0; j < yBlockNum; j++){
-      // test.drawBlock(i*blockDimension, j*blockDimension, blockDimension);
-      let block = new Block(univPalette, i*blockDimension, j*blockDimension, blockDimension)
+      let block = new Block(
+        univPalette, 
+        i*blockDimension, 
+        j*blockDimension, 
+        blockDimension, 
+        weights
+      )
       block.drawBlock()
       quilt[i].push(block)
     }
   }
-  console.log(quilt)
 }
 
 function draw() {
   
-}
-
-class Block{
-  constructor(palette, x, y, dim){
-    this.colors = this.setColors(palette)
-    this.x = x
-    this.y = y
-    this.dimension = dim
-  }
-
-  drawBlock(x, y, dim){
-    // block types
-    const allowedBlocks = [ 
-      () => this.drawSquare(),
-      () => this.drawVertical(),
-      () => this.drawHorizontal(),
-      () => this.drawDiagonalLeft(),
-      () => this.drawDiagonalRight(),
-      () => this.drawBothDiagonal(),
-      () => this.drawBothStraight()
-    ]
-    const blockNum = allowedBlocks.length
-    
-    random(allowedBlocks)()
-  }
-
-  // determine block color pallete
-  setColors(palette){
-    if (random() >= .5){
-      return([palette[0], palette[1]])
-    } else {
-      return([palette[1], palette[0]])
-    }
-  }
-  // single block wit no subdivisions
-  drawSquare(){
-    // const colors = this.setColors()
-    fill(this.colors[0])
-    rect(this.x, this.y, this.dimension, this.dimension)
-  }
-
-  // Single Straight Blocks
-  drawVertical(){
-    fill(this.colors[0])
-    rect(this.x, this.y, this.dimension/2, this.dimension);
-    fill(this.colors[1])
-    rect(this.x+this.dimension/2, this.y, this.dimension/2, this.dimension)
-  }
-
-  drawHorizontal(){
-    fill(this.colors[0])
-    rect(this.x, this.y, this.dimension, this.dimension/2);
-    fill(this.colors[1])
-    rect(this.x, this.y+this.dimension/2, this.dimension, this.dimension/2)
-  }
-
-  // Single Diagonal Blocks
-  drawDiagonalRight(){
-    fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x+this.dimension, this.y+this.dimension)
-    fill(this.colors[1])
-    triangle(this.x, this.y, this.x, this.y+this.dimension, this.x+this.dimension, this.y+this.dimension)
-  }
-
-  drawDiagonalLeft(){
-    fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x, this.y+this.dimension)
-    fill(this.colors[1])
-    triangle(this.x, this.y+this.dimension, this.x+this.dimension, this.y+this.dimension, this.x+this.dimension, this.y)
-  }
-
-  // Double Straight Block
-  drawBothStraight(){
-    fill(this.colors[0])
-    rect(this.x, this.y, this.dimension/2, this.dimension/2);
-    rect(this.x+this.dimension/2, this.y+this.dimension/2, this.dimension/2, this.dimension/2);
-    fill(this.colors[1])
-    rect(this.x+this.dimension/2, this.y, this.dimension/2, this.dimension/2);
-    rect(this.x, this.y+this.dimension/2, this.dimension/2, this.dimension/2);
-    
-  }
-
-  // Double Diagonal Straight Block
-  drawBothDiagonal(){
-    fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x+(this.dimension/2), this.y+(this.dimension/2))
-    triangle(this.x, this.y+this.dimension, this.x+this.dimension/2, this.y+this.dimension/2, this.x+this.dimension, this.y+this.dimension)
-    fill(this.colors[1])
-    triangle(this.x, this.y, this.x+this.dimension/2, this.y+this.dimension/2, this.x, this.y+this.dimension)
-    triangle(this.x+this.dimension, this.y, this.x+this.dimension/2, this.y+this.dimension/2, this.x+this.dimension, this.y+this.dimension)
-  }
 }
