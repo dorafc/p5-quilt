@@ -11,7 +11,7 @@ const colorWeights = [1,1,1,1,1]
 
 // weights for each block type
 // const weights = [[1,1,1,1,1,1,1,0]]
-const weights = [[1,1,1,1,1,1,1,0],
+const weights = [[1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,0],
                  [1,1,1,1,1,1,1,0]]
 

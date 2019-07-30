@@ -107,6 +107,7 @@ class Block{
       for (let j = 0; j < 2; j++){
         let block = new Block(
           this.univColor, 
+          this.cWeights,
           (i*newDim) + this.x, 
           (j*newDim) + this.y, 
           newDim, 
