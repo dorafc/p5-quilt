@@ -1,22 +1,23 @@
-// import Block from '/block.js'
-
 // dimensions of quilt
-const xBlockNum = 3;
-const yBlockNum = 3;
+const xBlockNum = 10;
+const yBlockNum = 12;
 
 // dimensions of block
-const blockDimension = 250;
+const blockDimension = 60;
 
 // allowed palette, currently limited to two colors
-const univPalette = ['#f5abcc', '#30c93b']
+const univPalette = ['#f5abcc', '#047a48']
+
+// weights for each block type
+const weights = [[1,1,1,1,1,1,1,0]]
+// const weights = [[1,1,1,1,1,1,1,20],
+//                  [1,1,1,1,1,1,1,1],
+//                  [1,1,1,1,1,1,1,0]]
+
+// ---------------
 
 // all blocks
 let quilt = [];
-
-// weights for each block type
-const weights = [1,1,1,1,1,1,1]
-// const weights = [1,0,0,5,5,0,0]
-// const weights = [1,1,1,0,0,0,1]
 
 function setup() {
   createCanvas(xBlockNum*blockDimension, yBlockNum*blockDimension);

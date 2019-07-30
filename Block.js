@@ -1,22 +1,23 @@
 class Block{
-  constructor(palette, x, y, dim, weights){
+  constructor(palette, x, y, dim, weights, rNum){
     this.colors = this.setColors(palette)
     this.x = x
     this.y = y
     this.dimension = dim
-    this.weights = weights;
+    this.weights = weights
   }
 
   drawBlock(x, y, dim){
     // block types
     const allowedBlocks = [ 
-      () => this.drawSquare(),
-      () => this.drawVertical(),
-      () => this.drawHorizontal(),
-      () => this.drawDiagonalLeft(),
-      () => this.drawDiagonalRight(),
-      () => this.drawBothDiagonal(),
-      () => this.drawBothStraight()
+      () => this.drawSquare(this.x, this.y, this.dimension),
+      () => this.drawVertical(this.x, this.y, this.dimension),
+      () => this.drawHorizontal(this.x, this.y, this.dimension),
+      () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+      () => this.drawDiagonalRight(this.x, this.y, this.dimension),
+      () => this.drawBothDiagonal(this.x, this.y, this.dimension),
+      () => this.drawBothStraight(this.x, this.y, this.dimension),
+      () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
     
     // random(allowedBlocks)()
@@ -28,8 +29,8 @@ class Block{
 
     // sum possible weights for each block
     let weightSum = 0;
-    this.weights.forEach(weight => weightSum += weight)
-
+    this.weights[0].forEach(weight => weightSum += weight)
+    
     // generate random integer and add 1 to work with weight values
     const block = parseInt(random(weightSum)) + 1;
 
@@ -37,18 +38,21 @@ class Block{
     let w = 0;
 
     // final value for selected block
-    let check = 0;
+    let check = -1;
 
     // iterate over array
-    for (let i = 0; i < this.weights.length; i++){
-      w = this.weights[i] + w;
+    for (let i = 0; i < this.weights[0].length; i++){
+      w = this.weights[0][i] + w;
       if (block - w <= 0){
         check = i
-        i = this.weights.length
+        i = this.weights[0].length
       }
     }
-
-    blocks[check]()
+    if (check == -1){
+      this.recurseBlock(this.x, this.y, this.dimension)
+    } else {
+      blocks[check]()
+    }
   }
 
   // determine block color pallete
@@ -61,65 +65,78 @@ class Block{
   }
 
   // recursive bloc
-  recurseBlock(){
-    
+  recurseBlock(x, y, dim){
+    // let blocks = []
+    const newDim = dim/2
+    for (let i = 0; i < 2; i++){
+      for (let j = 0; j < 2; j++){
+        let block = new Block(
+          this.colors, 
+          (i*newDim) + this.x, 
+          (j*newDim) + this.y, 
+          newDim, 
+          this.weights.slice(1),
+        )
+        block.drawBlock()
+        // blocks.push(block)
+      }
+    }
   }
 
   // single block wit no subdivisions
-  drawSquare(){
+  drawSquare(x, y, dim){
     // const colors = this.setColors()
     fill(this.colors[0])
-    rect(this.x, this.y, this.dimension, this.dimension)
+    rect(x, y, dim, dim)
   }
 
   // Single Straight Blocks
-  drawVertical(){
+  drawVertical(x, y, dim){
     fill(this.colors[0])
-    rect(this.x, this.y, this.dimension/2, this.dimension);
+    rect(x, y, dim/2, dim);
     fill(this.colors[1])
-    rect(this.x+this.dimension/2, this.y, this.dimension/2, this.dimension)
+    rect(x+dim/2, y, dim/2, dim)
   }
 
-  drawHorizontal(){
+  drawHorizontal(x, y, dim){
     fill(this.colors[0])
-    rect(this.x, this.y, this.dimension, this.dimension/2);
+    rect(x, y, dim, dim/2);
     fill(this.colors[1])
-    rect(this.x, this.y+this.dimension/2, this.dimension, this.dimension/2)
+    rect(x, y+dim/2, dim, dim/2)
   }
 
   // Single Diagonal Blocks
-  drawDiagonalRight(){
+  drawDiagonalRight(x, y, dim){
     fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x+this.dimension, this.y+this.dimension)
+    triangle(x, y, x+dim, y, x+dim, y+dim)
     fill(this.colors[1])
-    triangle(this.x, this.y, this.x, this.y+this.dimension, this.x+this.dimension, this.y+this.dimension)
+    triangle(x, y, x, y+dim, x+dim, y+dim)
   }
 
-  drawDiagonalLeft(){
+  drawDiagonalLeft(x, y, dim){
     fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x, this.y+this.dimension)
+    triangle(x, y, x+dim, y, x, y+dim)
     fill(this.colors[1])
-    triangle(this.x, this.y+this.dimension, this.x+this.dimension, this.y+this.dimension, this.x+this.dimension, this.y)
+    triangle(x, y+dim, x+dim, y+dim, x+dim, y)
   }
 
   // Double Straight Block
-  drawBothStraight(){
+  drawBothStraight(x, y, dim){
     fill(this.colors[0])
-    rect(this.x, this.y, this.dimension/2, this.dimension/2);
-    rect(this.x+this.dimension/2, this.y+this.dimension/2, this.dimension/2, this.dimension/2);
+    rect(x, y, dim/2, dim/2);
+    rect(x+dim/2, y+dim/2, dim/2, dim/2);
     fill(this.colors[1])
-    rect(this.x+this.dimension/2, this.y, this.dimension/2, this.dimension/2);
-    rect(this.x, this.y+this.dimension/2, this.dimension/2, this.dimension/2);
-    
+    rect(x+dim/2, y, dim/2, dim/2);
+    rect(x, y+dim/2, dim/2, dim/2); 
   }
 
   // Double Diagonal Straight Block
-  drawBothDiagonal(){
+  drawBothDiagonal(x, y, dim){
     fill(this.colors[0])
-    triangle(this.x, this.y, this.x+this.dimension, this.y, this.x+(this.dimension/2), this.y+(this.dimension/2))
-    triangle(this.x, this.y+this.dimension, this.x+this.dimension/2, this.y+this.dimension/2, this.x+this.dimension, this.y+this.dimension)
+    triangle(x, y, x+dim, y, x+(dim/2), y+(dim/2))   
+    triangle(x, y+dim, x+dim/2, y+dim/2, x+dim, y+dim)
     fill(this.colors[1])
-    triangle(this.x, this.y, this.x+this.dimension/2, this.y+this.dimension/2, this.x, this.y+this.dimension)
-    triangle(this.x+this.dimension, this.y, this.x+this.dimension/2, this.y+this.dimension/2, this.x+this.dimension, this.y+this.dimension)
+    triangle(x, y, x+dim/2, y+dim/2, x, y+dim)
+    triangle(x+dim, y, x+dim/2, y+dim/2, x+dim, y+dim)
   }
 }
