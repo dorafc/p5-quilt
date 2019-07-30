@@ -1,18 +1,19 @@
 // dimensions of quilt
-const xBlockNum = 10;
-const yBlockNum = 12;
+const xBlockNum = 12;
+const yBlockNum = 10;
 
 // dimensions of block
 const blockDimension = 60;
 
 // allowed palette, currently limited to two colors
-const univPalette = ['#f5abcc', '#047a48']
+const univPalette = ['#fa87a0', '#069c13', '#025949', '#ffda1f','#a163f2']
+const colorWeights = [1,1,1,1,1]
 
 // weights for each block type
-const weights = [[1,1,1,1,1,1,1,0]]
-// const weights = [[1,1,1,1,1,1,1,20],
-//                  [1,1,1,1,1,1,1,1],
-//                  [1,1,1,1,1,1,1,0]]
+// const weights = [[1,1,1,1,1,1,1,0]]
+const weights = [[1,1,1,1,1,1,1,0],
+                 [1,1,1,1,1,1,1,0],
+                 [1,1,1,1,1,1,1,0]]
 
 // ---------------
 
@@ -27,6 +28,7 @@ function setup() {
     for (let j = 0; j < yBlockNum; j++){
       let block = new Block(
         univPalette, 
+        colorWeights,
         i*blockDimension, 
         j*blockDimension, 
         blockDimension, 
