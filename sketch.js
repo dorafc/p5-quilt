@@ -1,6 +1,6 @@
 // dimensions of quilt
-const xBlockNum = 10;
-const yBlockNum = 12;
+const xBlockNum = 10; //columns
+const yBlockNum = 12; //rows
 
 // dimensions of block
 const blockDimension = 50;
@@ -35,7 +35,7 @@ function setup() {
         j*blockDimension, 
         blockDimension, 
         weights,
-        i
+        j
       )
       block.drawBlock()
       quilt[i].push(block)

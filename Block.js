@@ -12,7 +12,7 @@ class Block{
     this.gradColors = this.genGradient(
                         color(this.univColor[this.gradColor[0]]), 
                         color(this.gradColor[1]), 
-                        10
+                        12
                       )
     this.colors = this.setColors(palette, cWeights, this.gradColors, rNum, this.gradColor[0])
     this.cWeights = cWeights
