@@ -1,18 +1,19 @@
 class Block{
-  constructor(palette, cWeights, twoFab, x, y, dim, weights, rNum){
-    this.rNum = rNum;
-    this.univColor = palette
-    this.twoFab = twoFab
-    this.x = x
-    this.y = y
-    this.dimension = dim
-    this.weights = weights
-    this.hasGrad = true
-    this.gradColor = [0, '#333a33']
-    this.gradColors = []
-    this.colors = []
-    this.cWeights = cWeights
-  }
+  constructor(palette, cWeights, twoFab, x, y, dim, weights, rNum, tRows, hasGrad, gradCol){
+    this.rNum = rNum;                // number of the current row
+    this.univColor = palette         // universal color palette for the entire quilt
+    this.twoFab = twoFab             // allow two fabrics of the same color per square
+    this.x = x                       // x coordinate of the origin
+    this.y = y                       // y coordinate of the origin
+    this.dimension = dim             // dimension of the block
+    this.weights = weights           // weights of how often a block will be selected
+    this.hasGrad = hasGrad           // has a gradient or not
+    this.gradColor = gradCol         // gradient color index from universal palette and change color
+    this.gradColors = []             // store all gradient colors
+    this.colors = []                 // block color palette
+    this.cWeights = cWeights         // weights for the universal color palette
+    this.totalRows = tRows           // total number of rows for the quilt
+  }   
 
   drawBlock(x, y, dim){
     // block types
@@ -27,11 +28,10 @@ class Block{
       () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
     
-    // random(allowedBlocks)()
     this.gradColors = this.genGradient(
                         color(this.univColor[this.gradColor[0]]), 
                         color(this.gradColor[1]), 
-                        9
+                        this.totalRows
                       )
     this.colors = this.setColors(
                     this.univColor, 
@@ -135,7 +135,10 @@ class Block{
           (j*newDim) + this.y, 
           newDim, 
           this.weights.slice(1),
-          this.rNum
+          this.rNum,
+          this.totalRows,
+          this.hasGrad,
+          this.gradColor
         )
         block.drawBlock()
         // blocks.push(block)
