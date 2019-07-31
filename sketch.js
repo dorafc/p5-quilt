@@ -1,18 +1,19 @@
 // dimensions of quilt
-const xBlockNum = 12;
-const yBlockNum = 10;
+const xBlockNum = 10;
+const yBlockNum = 12;
 
 // dimensions of block
-const blockDimension = 60;
+const blockDimension = 50;
 
 // allowed palette, currently limited to two colors
-const univPalette = ['#fa87a0', '#069c13', '#025949', '#ffda1f','#a163f2']
-const colorWeights = [1,1,1,1,1]
+const univPalette = ['#fa87a0', '#069c13', '#025949', '#ffda1f','#a163f2', '#4d0c70', '#cccccc']
+const colorWeights = [100,0,10,0,0,0,0]
+const allowTwoFabrics = true;
 
 // weights for each block type
 // const weights = [[1,1,1,1,1,1,1,0]]
-const weights = [[1,1,1,1,1,1,1,1],
-                 [1,1,1,1,1,1,1,0],
+const weights = [[1,1,1,1,1,1,1,10],
+                 [1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,0]]
 
 // ---------------
@@ -29,10 +30,12 @@ function setup() {
       let block = new Block(
         univPalette, 
         colorWeights,
+        allowTwoFabrics,
         i*blockDimension, 
         j*blockDimension, 
         blockDimension, 
-        weights
+        weights,
+        i
       )
       block.drawBlock()
       quilt[i].push(block)

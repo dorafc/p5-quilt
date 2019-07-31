@@ -1,12 +1,21 @@
 class Block{
-  constructor(palette, cWeights, x, y, dim, weights, rNum){
+  constructor(palette, cWeights, twoFab, x, y, dim, weights, rNum){
+    this.rNum = rNum;
     this.univColor = palette
-    this.colors = this.setColors(palette, cWeights)
-    this.cWeights = cWeights
+    this.twoFab = twoFab
     this.x = x
     this.y = y
     this.dimension = dim
     this.weights = weights
+    this.hasGrad = true
+    this.gradColor = [0, '#111411']
+    this.gradColors = this.genGradient(
+                        color(this.univColor[this.gradColor[0]]), 
+                        color(this.gradColor[1]), 
+                        10
+                      )
+    this.colors = this.setColors(palette, cWeights, this.gradColors, rNum, this.gradColor[0])
+    this.cWeights = cWeights
   }
 
   drawBlock(x, y, dim){
@@ -26,37 +35,7 @@ class Block{
     this.selectBlock(allowedBlocks)
   }
 
-  // selected rendered block based on weight
-  selectBlock(blocks){
-
-    // sum possible weights for each block
-    let weightSum = 0;
-    this.weights[0].forEach(weight => weightSum += weight)
-    
-    // generate random integer and add 1 to work with weight values
-    const block = parseInt(random(weightSum)) + 1;
-
-    // value for iterating over possible weights
-    let w = 0;
-
-    // final value for selected block
-    let check = -1;
-
-    // iterate over array
-    for (let i = 0; i < this.weights[0].length; i++){
-      w = this.weights[0][i] + w;
-      if (block - w <= 0){
-        check = i
-        i = this.weights[0].length
-      }
-    }
-    // if (check == -1){
-    //   this.recurseBlock(this.x, this.y, this.dimension)
-    // } else {
-      blocks[check]()
-    // }
-  }
-
+  /*-- UTIL FUNCTIONS --*/
   // determine random number from weights
   getRandomWeight(weights){
     let weightSum = 0;
@@ -80,26 +59,61 @@ class Block{
         i = weights.length
       }
     }
-
     return check;
   }
 
+  genGradient(colorA, colorB, count){
+    let gradColors = []
+    gradColors.push(colorA)
+    for (let i = 1; i < count-1; i++){
+      gradColors.push(lerpColor(colorA, colorB, i/(count-1)))
+    }
+    gradColors.push(colorB)
+    return gradColors;
+  }
+
+  // selected rendered block based on weight
+  selectBlock(blocks){
+    const block = this.getRandomWeight(this.weights[0])
+    const check = this.getWeightedVal(this.weights[0], block)
+    blocks[check]()
+  }
+
   // determine block color pallete
-  setColors(palette, weights){
+  setColors(palette, weights, gradBuddy, rowNum, checkGrad){
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
-    let colorA = palette[indexA]
-
+    let colorA
+    if (indexA === checkGrad  && this.hasGrad){
+      colorA = gradBuddy[rowNum]
+    } else {
+      colorA = palette[indexA]
+    }
+    
     let newWeights = weights.slice()
-    newWeights[indexA] = 0;
+    // allow blocks to contain two fabrics of the same color
+    if (!this.twoFab) {      
+      newWeights[indexA] = 0;
+    }
     
     let checkB = this.getRandomWeight(newWeights)
-    let colorB = palette[this.getWeightedVal(newWeights, checkB)]
+    let indexB = this.getWeightedVal(newWeights, checkB)
+    let colorB
+    if (indexB === checkGrad && this.hasGrad){
+      colorB = gradBuddy[rowNum]
+    } else {
+      colorB = palette[indexB]
+    }
+    if (colorA === colorB){
+      console.log('boop')
+      colorMode(HSB, 100)
+      colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
+    }
     
     return ([colorA, colorB])
   }
 
-  // recursive bloc
+  // recursive block
   recurseBlock(x, y, dim){
     // let blocks = []
     const newDim = dim/2
@@ -108,10 +122,12 @@ class Block{
         let block = new Block(
           this.univColor, 
           this.cWeights,
+          this.twoFab,
           (i*newDim) + this.x, 
           (j*newDim) + this.y, 
           newDim, 
           this.weights.slice(1),
+          this.rNum
         )
         block.drawBlock()
         // blocks.push(block)
@@ -121,7 +137,6 @@ class Block{
 
   // single block wit no subdivisions
   drawSquare(x, y, dim){
-    // const colors = this.setColors()
     fill(this.colors[0])
     rect(x, y, dim, dim)
   }
