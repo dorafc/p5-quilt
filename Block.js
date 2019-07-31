@@ -1,18 +1,18 @@
 class Block{
   constructor(palette, cWeights, twoFab, x, y, dim, weights, rNum, tRows, hasGrad, gradCol){
-    this.rNum = rNum;                // number of the current row
-    this.univColor = palette         // universal color palette for the entire quilt
-    this.twoFab = twoFab             // allow two fabrics of the same color per square
-    this.x = x                       // x coordinate of the origin
-    this.y = y                       // y coordinate of the origin
-    this.dimension = dim             // dimension of the block
-    this.weights = weights           // weights of how often a block will be selected
-    this.hasGrad = hasGrad           // has a gradient or not
-    this.gradColor = gradCol         // gradient color index from universal palette and change color
-    this.gradColors = []             // store all gradient colors
-    this.colors = []                 // block color palette
-    this.cWeights = cWeights         // weights for the universal color palette
-    this.totalRows = tRows           // total number of rows for the quilt
+    this.rNum = rNum;             // number of the current row
+    this.univColor = palette      // universal color palette for the entire quilt
+    this.twoFab = twoFab          // allow two fabrics of the same color per square
+    this.x = x                    // x coordinate of the origin
+    this.y = y                    // y coordinate of the origin
+    this.dimension = dim          // dimension of the block
+    this.weights = weights        // weights of how often a block will be selected
+    this.hasGrad = hasGrad        // has a gradient or not
+    this.gradColor = gradCol      // gradient color index from universal palette and change color
+    this.gradColors = []          // store all gradient colors
+    this.colors = []              // block color palette
+    this.cWeights = cWeights      // weights for the universal color palette
+    this.totalRows = tRows        // total number of rows for the quilt
   }   
 
   drawBlock(x, y, dim){
@@ -40,6 +40,10 @@ class Block{
                     this.rNum, 
                     this.gradColor[0]
                   )
+    if (this.hasGrad){
+      this.colors = this.setGradPalette(this.colors, this.gradColors, this.rowNum)
+    }
+    
     this.selectBlock(allowedBlocks)
   }
 
@@ -80,6 +84,11 @@ class Block{
     return gradColors;
   }
 
+  setGradPalette(colors, grad, rowNum){
+    colors[rowNum] = grad[rowNum]
+    return colors;
+  }
+
   // selected rendered block based on weight
   selectBlock(blocks){
     const block = this.getRandomWeight(this.weights[0])
@@ -88,13 +97,12 @@ class Block{
   }
 
   // determine block color pallete
-  setColors(palette, weights, gradBuddy, rowNum, checkGrad){
-    console.log(gradBuddy)
+  setColors(palette, weights, grad, rowNum, checkGrad){
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
     let colorA
     if (indexA === checkGrad  && this.hasGrad){
-      colorA = gradBuddy[rowNum]
+      colorA = grad[rowNum]
     } else {
       colorA = palette[indexA]
     }
@@ -109,7 +117,7 @@ class Block{
     let indexB = this.getWeightedVal(newWeights, checkB)
     let colorB
     if (indexB === checkGrad && this.hasGrad){
-      colorB = gradBuddy[rowNum]
+      colorB = grad[rowNum]
     } else {
       colorB = palette[indexB]
     }

@@ -1,21 +1,21 @@
 // dimensions of quilt
-const colBlockNum = 7; //columns
-const rowBlockNum = 9; //rows
+const colBlockNum = 40; //columns
+const rowBlockNum = 30; //rows
 
 // dimensions of block
-const blockDimension = 80;
+const blockDimension = 20;
 
 // allowed palette, currently limited to two colors
 const univPalette = ['#fa87a0', '#069c13', '#025949', '#ffda1f','#a163f2', '#4d0c70', '#cccccc']
-const colorWeights = [100,0,10,0,0,0,0]
-const allowTwoFabrics = false;
+const colorWeights = [5,1,1,1,1,1,0]
+const allowTwoFabrics = true;
 
 // gradient info
 const hasGradient = true;
 const gradientColors = [0, '#333a33']
 
 // weights for each block type
-const weights = [[0,0,0,2,1,0,0,1],
+const weights = [[1,1,1,1,1,1,1,0],
                  [0,0,0,2,1,0,0,0],
                  [1,1,1,1,1,1,1,0]]
 
