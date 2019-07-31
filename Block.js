@@ -8,13 +8,9 @@ class Block{
     this.dimension = dim
     this.weights = weights
     this.hasGrad = true
-    this.gradColor = [0, '#111411']
-    this.gradColors = this.genGradient(
-                        color(this.univColor[this.gradColor[0]]), 
-                        color(this.gradColor[1]), 
-                        12
-                      )
-    this.colors = this.setColors(palette, cWeights, this.gradColors, rNum, this.gradColor[0])
+    this.gradColor = [0, '#333a33']
+    this.gradColors = []
+    this.colors = []
     this.cWeights = cWeights
   }
 
@@ -32,6 +28,18 @@ class Block{
     ]
     
     // random(allowedBlocks)()
+    this.gradColors = this.genGradient(
+                        color(this.univColor[this.gradColor[0]]), 
+                        color(this.gradColor[1]), 
+                        9
+                      )
+    this.colors = this.setColors(
+                    this.univColor, 
+                    this.cWeights, 
+                    this.gradColors, 
+                    this.rNum, 
+                    this.gradColor[0]
+                  )
     this.selectBlock(allowedBlocks)
   }
 
@@ -81,6 +89,7 @@ class Block{
 
   // determine block color pallete
   setColors(palette, weights, gradBuddy, rowNum, checkGrad){
+    console.log(gradBuddy)
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
     let colorA
@@ -105,7 +114,6 @@ class Block{
       colorB = palette[indexB]
     }
     if (colorA === colorB){
-      console.log('boop')
       colorMode(HSB, 100)
       colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
     }
