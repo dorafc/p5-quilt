@@ -98,6 +98,7 @@ class Block{
 
   // determine block color pallete
   setColors(palette, weights, grad, rowNum, checkGrad){
+    colorMode(HSB, 360, 100, 100, 1)
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
     let colorA
@@ -122,8 +123,12 @@ class Block{
       colorB = palette[indexB]
     }
     if (colorA === colorB){
-      colorMode(HSB, 100)
+      
       colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
+      // if (this.rowNum == 1){
+        // console.log(colorA, colorB)
+      // }  
+      // colorMode(RGB, 255)
     }
     
     return ([colorA, colorB])
