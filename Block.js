@@ -28,11 +28,11 @@ class Block{
       () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
     
-    this.gradColors = this.genGradient(
-                        color(this.univColor[this.gradColor[0]]), 
-                        color(this.gradColor[1]), 
-                        this.totalRows
-                      )
+    // this.gradColors = this.genGradient(
+    //                     color(this.univColor[this.gradColor[0]]), 
+    //                     color(this.gradColor[1]), 
+    //                     this.totalRows
+    //                   )
     this.colors = this.setColors(
                     this.univColor, 
                     this.cWeights, 
@@ -98,15 +98,15 @@ class Block{
 
   // determine block color pallete
   setColors(palette, weights, grad, rowNum, checkGrad){
-    colorMode(HSB, 360, 100, 100, 1)
+    colorMode(HSB)
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
     let colorA
-    if (indexA === checkGrad  && this.hasGrad){
-      colorA = grad[rowNum]
-    } else {
+    // if (indexA === checkGrad  && this.hasGrad){
+    //   colorA = grad[rowNum]
+    // } else {
       colorA = palette[indexA]
-    }
+    // }
     
     let newWeights = weights.slice()
     // allow blocks to contain two fabrics of the same color
@@ -117,18 +117,25 @@ class Block{
     let checkB = this.getRandomWeight(newWeights)
     let indexB = this.getWeightedVal(newWeights, checkB)
     let colorB
-    if (indexB === checkGrad && this.hasGrad){
-      colorB = grad[rowNum]
-    } else {
+    // if (indexB === checkGrad && this.hasGrad){
+    //   colorB = grad[rowNum]
+    // } else {
       colorB = palette[indexB]
-    }
+    // }
     if (colorA === colorB){
-      
-      colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
-      // if (this.rowNum == 1){
-        // console.log(colorA, colorB)
-      // }  
-      // colorMode(RGB, 255)
+      // push()
+      // colorMode(HSB)
+      if(random() > .5){
+        colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
+        console.log(brightness(colorA)-10)
+        // colorB = color(red(colorA)*.99, green(colorA)*.99, blue(colorA)*.99)
+      } else {
+        colorA = color(hue(colorB), saturation(colorB), brightness(colorB)-10)
+        console.log(brightness(colorB)-10)
+        // colorA = color(red(colorA), green(colorA), blue(colorA), 125)
+        // colorA = color(red(colorB)*.99, green(colorB)*.99, blue(colorB)*.99)
+      }  
+      // pop()
     }
     
     return ([colorA, colorB])
