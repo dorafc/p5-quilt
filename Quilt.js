@@ -11,7 +11,7 @@ class Quilt{
     this.allowTwoFabrics = allowTwoFabrics
 
     //gradient info
-    this.hasGradient = true
+    this.hasGradient = hasGrad
     this.gradientColors = gradColors
     if (this.hasGradient) {
       this.gradient = this.generateGradientColors(
@@ -58,11 +58,7 @@ class Quilt{
           i*this.dimensions, 
           j*this.dimensions, 
           this.dimensions, 
-          this.blockWeights,
-          j,
-          this.rows,
-          this.hasGradient,
-          this.gradient
+          this.blockWeights
         )
         block.drawBlock()
         this.blocks[i].push(block)

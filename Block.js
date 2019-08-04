@@ -1,18 +1,13 @@
 class Block{
-  constructor(palette, cWeights, twoFab, x, y, dim, weights, rNum, tRows, hasGrad, gradCol){
-    this.rNum = rNum;             // number of the current row
+  constructor(palette, cWeights, twoFab, x, y, dim, weights){
     this.univColor = palette      // universal color palette for the entire quilt
     this.twoFab = twoFab          // allow two fabrics of the same color per square
     this.x = x                    // x coordinate of the origin
     this.y = y                    // y coordinate of the origin
     this.dimension = dim          // dimension of the block
     this.weights = weights        // weights of how often a block will be selected
-    this.hasGrad = hasGrad        // has a gradient or not
-    this.gradColor = gradCol      // gradient color index from universal palette and change color
-    this.gradColors = []          // store all gradient colors
     this.colors = []              // block color palette
     this.cWeights = cWeights      // weights for the universal color palette
-    this.totalRows = tRows        // total number of rows for the quilt
   }   
 
   drawBlock(x, y, dim){
@@ -27,23 +22,8 @@ class Block{
       () => this.drawBothStraight(this.x, this.y, this.dimension),
       () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
-    
-    // this.gradColors = this.genGradient(
-    //                     color(this.univColor[this.gradColor[0]]), 
-    //                     color(this.gradColor[1]), 
-    //                     this.totalRows
-    //                   )
-    this.colors = this.setColors(
-                    this.univColor, 
-                    this.cWeights, 
-                    this.gradColors, 
-                    this.rNum, 
-                    this.gradColor[0]
-                  )
-    if (this.hasGrad){
-      this.colors = this.setGradPalette(this.colors, this.gradColors, this.rowNum)
-    }
-    
+
+    this.colors = this.setColors(this.univColor, this.cWeights)
     this.selectBlock(allowedBlocks)
   }
 
@@ -56,6 +36,7 @@ class Block{
     return parseInt(random(weightSum)) + 1;
   }
 
+    //  get a weighted value from the array
   getWeightedVal(weights, num){
     // selected index
     let check = -1;
@@ -74,21 +55,6 @@ class Block{
     return check;
   }
 
-  genGradient(colorA, colorB, count){
-    let gradColors = []
-    gradColors.push(colorA)
-    for (let i = 1; i < count-1; i++){
-      gradColors.push(lerpColor(colorA, colorB, i/(count-1)))
-    }
-    gradColors.push(colorB)
-    return gradColors;
-  }
-
-  setGradPalette(colors, grad, rowNum){
-    colors[rowNum] = grad[rowNum]
-    return colors;
-  }
-
   // selected rendered block based on weight
   selectBlock(blocks){
     const block = this.getRandomWeight(this.weights[0])
@@ -97,16 +63,11 @@ class Block{
   }
 
   // determine block color pallete
-  setColors(palette, weights, grad, rowNum, checkGrad){
+  setColors(palette, weights){
     colorMode(HSB)
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
-    let colorA
-    // if (indexA === checkGrad  && this.hasGrad){
-    //   colorA = grad[rowNum]
-    // } else {
-      colorA = palette[indexA]
-    // }
+    let colorA = palette[indexA]
     
     let newWeights = weights.slice()
     // allow blocks to contain two fabrics of the same color
@@ -116,26 +77,14 @@ class Block{
     
     let checkB = this.getRandomWeight(newWeights)
     let indexB = this.getWeightedVal(newWeights, checkB)
-    let colorB
-    // if (indexB === checkGrad && this.hasGrad){
-    //   colorB = grad[rowNum]
-    // } else {
-      colorB = palette[indexB]
-    // }
+    let colorB = palette[indexB]
+
     if (colorA === colorB){
-      // push()
-      // colorMode(HSB)
       if(random() > .5){
         colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
-        console.log(brightness(colorA)-10)
-        // colorB = color(red(colorA)*.99, green(colorA)*.99, blue(colorA)*.99)
       } else {
         colorA = color(hue(colorB), saturation(colorB), brightness(colorB)-10)
-        console.log(brightness(colorB)-10)
-        // colorA = color(red(colorA), green(colorA), blue(colorA), 125)
-        // colorA = color(red(colorB)*.99, green(colorB)*.99, blue(colorB)*.99)
       }  
-      // pop()
     }
     
     return ([colorA, colorB])
