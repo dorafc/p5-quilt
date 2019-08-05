@@ -26,6 +26,10 @@ class Quilt{
 
     // blocks
     this.blocks = []
+
+    // sets for rendering
+    this.hasDrawn = new Set();
+    this.canDraw = new Set()
   }  
 
   generateGradientColors(colorA, colorB, rows){
@@ -38,11 +42,10 @@ class Quilt{
     return gradient
   }
 
-  renderQuilt(){
+  initQuilt(){
     for(let i = 0; i < this.columns; i++){
       this.blocks[i] = new Array();
 
-      
       for (let j = 0; j < this.rows; j++){
 
         // update gradient color
@@ -60,9 +63,57 @@ class Quilt{
           this.dimensions, 
           this.blockWeights
         )
-        block.drawBlock()
+        // block.drawBlock()
         this.blocks[i].push(block)
       }
     }
+
+    // seed block
+    const seedRow = parseInt(random(this.rows))
+    const seedColumn = parseInt(random(this.columns))
+    this.blocks[seedColumn][seedRow].drawBlock()
+    this.hasDrawn.add(this.convertToString(seedColumn,seedRow))
+    this.setToDraw(seedColumn, seedRow)
+    this.drawNextBlock()
   }
+
+  convertToString(a, b){
+    return '['+ new String(a) + ',' + new String(b) +']'
+  }
+
+  // add indexs to the draw set
+  setToDraw(col, row){
+    if (!this.hasDrawn.has(this.convertToString(col, row-1)) && row-1 >= 0){
+      this.canDraw.add(this.convertToString(col, row-1))
+    }
+    if (!this.hasDrawn.has(this.convertToString(col, row+1)) && row+1 <= this.rows-1){
+      this.canDraw.add(this.convertToString(col, row+1))
+    }
+    if (!this.hasDrawn.has(this.convertToString(col+1, row)) && col+1 <= this.columns-1){
+      this.canDraw.add(this.convertToString(col+1, row))
+    }
+    if (!this.hasDrawn.has(this.convertToString(col-1, row)) && col-1 >= 0){
+      this.canDraw.add(this.convertToString(col-1, row))
+    }
+    
+    this.drawNextBlock()
+  }
+
+  drawNextBlock(){
+    let drawNext = this.canDraw.entries()
+
+    for (let [next] of drawNext) {
+      let [col, row] = eval(next)
+      col = parseInt(col)
+      row = parseInt(row)
+      this.canDraw.delete(next)
+      this.blocks[col][row].drawBlock()
+      this.hasDrawn.add(next)
+      this.setToDraw(col, row)
+    }
+  }
+
+  
+
 }
+

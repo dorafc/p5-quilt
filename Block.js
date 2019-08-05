@@ -8,6 +8,7 @@ class Block{
     this.weights = weights        // weights of how often a block will be selected
     this.colors = []              // block color palette
     this.cWeights = cWeights      // weights for the universal color palette
+    this.edges = [0, 0, 0, 0]
   }   
 
   drawBlock(x, y, dim){
@@ -54,6 +55,7 @@ class Block{
     }
     return check;
   }
+  /*-- /UTIL FUNCTIONS --*/
 
   // selected rendered block based on weight
   selectBlock(blocks){
@@ -119,6 +121,7 @@ class Block{
   drawSquare(x, y, dim){
     fill(this.colors[0])
     rect(x, y, dim, dim)
+    this.edges = [1,1,1,1]
   }
 
   // Single Straight Blocks
@@ -127,6 +130,7 @@ class Block{
     rect(x, y, dim/2, dim);
     fill(this.colors[1])
     rect(x+dim/2, y, dim/2, dim)
+    this.edges = [[1,-1], -1, [-1, 1], 1]
   }
 
   drawHorizontal(x, y, dim){
@@ -134,6 +138,7 @@ class Block{
     rect(x, y, dim, dim/2);
     fill(this.colors[1])
     rect(x, y+dim/2, dim, dim/2)
+    this.edges = [1, [1, -1], -1, [-1,1]]
   }
 
   // Single Diagonal Blocks
@@ -142,6 +147,7 @@ class Block{
     triangle(x, y, x+dim, y, x+dim, y+dim)
     fill(this.colors[1])
     triangle(x, y, x, y+dim, x+dim, y+dim)
+    this.edges = [1, 1, -1, -1]
   }
 
   drawDiagonalLeft(x, y, dim){
@@ -149,6 +155,7 @@ class Block{
     triangle(x, y, x+dim, y, x, y+dim)
     fill(this.colors[1])
     triangle(x, y+dim, x+dim, y+dim, x+dim, y)
+    this.edges = [1, -1, -1, 1]
   }
 
   // Double Straight Block
@@ -159,6 +166,7 @@ class Block{
     fill(this.colors[1])
     rect(x+dim/2, y, dim/2, dim/2);
     rect(x, y+dim/2, dim/2, dim/2); 
+    this.edges = [[1, -1], [-1, 1], [1, -1], [-1,]]
   }
 
   // Double Diagonal Straight Block
@@ -169,5 +177,6 @@ class Block{
     fill(this.colors[1])
     triangle(x, y, x+dim/2, y+dim/2, x, y+dim)
     triangle(x+dim, y, x+dim/2, y+dim/2, x+dim, y+dim)
+    this.edges = [1, -1, 1, -1]
   }
 }
