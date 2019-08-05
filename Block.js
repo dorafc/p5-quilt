@@ -8,7 +8,8 @@ class Block{
     this.weights = weights        // weights of how often a block will be selected
     this.colors = []              // block color palette
     this.cWeights = cWeights      // weights for the universal color palette
-    this.edges = [0, 0, 0, 0]
+    this.edges = [0, 0, 0, 0]     // initialize with the edges of the block
+    this.neightborColors = true;
   }   
 
   drawBlock(x, y, dim){
@@ -23,8 +24,13 @@ class Block{
       () => this.drawBothStraight(this.x, this.y, this.dimension),
       () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
+    
+    if (this.neightborColors){
+      this.colors = [this.univColor[0], this.univColor[2]]
+    } else {
+      this.colors = this.setColors(this.univColor, this.cWeights)
+    }
 
-    this.colors = this.setColors(this.univColor, this.cWeights)
     this.selectBlock(allowedBlocks)
   }
 
@@ -56,6 +62,30 @@ class Block{
     return check;
   }
   /*-- /UTIL FUNCTIONS --*/
+
+  /*-- GET FUNCTIONS--*/
+  getTopEdge(){
+    return this.edges[0]
+  }
+
+  getRightEdge(){
+    return this.edges[1]
+  }
+
+  getBottomEdge(){
+    return this.edges[2]
+  }
+
+  getLeftEdge(){
+    return this.edges[3]
+  }
+  /*-- /GET FUNCTIONS--*/
+
+  // set egdes from neighbors
+  setEdges(edges){
+    this.edges = edges
+  }
+  // determine the symetry of the block
 
   // selected rendered block based on weight
   selectBlock(blocks){

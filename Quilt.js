@@ -71,13 +71,27 @@ class Quilt{
       }
     }
 
+    // add seed block to set of blocks to draw
     canDraw.add(this.convertToString(seedColumn, seedRow))
 
+    // get iterators of set to draw
     let drawNext = canDraw.entries()
-    
+
     for (let [next] of drawNext) {
       let [col, row] = eval(next)
+      // remove from canDraw set
       canDraw.delete(next)
+
+      // get edges from neighbors
+      this.blocks[col][row].setEdges([
+        (row-1 >= 0) ? this.blocks[col][row-1].getBottomEdge() : -1,
+        (col+1 <= this.columns-1) ? this.blocks[col+1][row].getLeftEdge() : -1,
+        (row+1 <= this.rows-1) ? this.blocks[col][row+1].getTopEdge() : -1,
+        (col-1 >= 0) ? this.blocks[col-1][row].getRightEdge() : -1
+      ])
+      console.log(this.blocks[col][row].edges)
+
+      // draw block
       this.blocks[col][row].drawBlock()
       hasDrawn.add(next)
       
