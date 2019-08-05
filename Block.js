@@ -119,64 +119,77 @@ class Block{
 
   // single block wit no subdivisions
   drawSquare(x, y, dim){
-    fill(this.colors[0])
+    const color = this.colors[0]
+    fill(color)
     rect(x, y, dim, dim)
-    this.edges = [1,1,1,1]
+    this.edges = [color,color,color,color]
   }
 
   // Single Straight Blocks
   drawVertical(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     rect(x, y, dim/2, dim);
-    fill(this.colors[1])
+    fill(colorB)
     rect(x+dim/2, y, dim/2, dim)
-    this.edges = [[1,-1], -1, [-1, 1], 1]
+    this.edges = [[colorA,colorB], colorB, [colorB, colorA], colorA]
   }
 
   drawHorizontal(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     rect(x, y, dim, dim/2);
-    fill(this.colors[1])
+    fill(colorB)
     rect(x, y+dim/2, dim, dim/2)
-    this.edges = [1, [1, -1], -1, [-1,1]]
+    this.edges = [colorA, [colorA, colorB], colorB, [colorB,colorA]]
   }
 
   // Single Diagonal Blocks
   drawDiagonalRight(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     triangle(x, y, x+dim, y, x+dim, y+dim)
-    fill(this.colors[1])
+    fill(colorB)
     triangle(x, y, x, y+dim, x+dim, y+dim)
-    this.edges = [1, 1, -1, -1]
+    this.edges = [colorA, colorA, colorB, colorB]
   }
 
   drawDiagonalLeft(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     triangle(x, y, x+dim, y, x, y+dim)
     fill(this.colors[1])
     triangle(x, y+dim, x+dim, y+dim, x+dim, y)
-    this.edges = [1, -1, -1, 1]
+    this.edges = [colorA, colorB, colorB, colorA]
   }
 
   // Double Straight Block
   drawBothStraight(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     rect(x, y, dim/2, dim/2);
     rect(x+dim/2, y+dim/2, dim/2, dim/2);
-    fill(this.colors[1])
+    fill(colorB)
     rect(x+dim/2, y, dim/2, dim/2);
     rect(x, y+dim/2, dim/2, dim/2); 
-    this.edges = [[1, -1], [-1, 1], [1, -1], [-1,]]
+    this.edges = [[colorA, colorB], [colorB, colorA], [colorA, colorB], [colorB,colorA]]
   }
 
   // Double Diagonal Straight Block
   drawBothDiagonal(x, y, dim){
-    fill(this.colors[0])
+    const colorA = this.colors[0]
+    const colorB = this.colors[1]
+    fill(colorA)
     triangle(x, y, x+dim, y, x+(dim/2), y+(dim/2))   
     triangle(x, y+dim, x+dim/2, y+dim/2, x+dim, y+dim)
-    fill(this.colors[1])
+    fill(colorB)
     triangle(x, y, x+dim/2, y+dim/2, x, y+dim)
     triangle(x+dim, y, x+dim/2, y+dim/2, x+dim, y+dim)
-    this.edges = [1, -1, 1, -1]
+    this.edges = [colorA, colorB, colorA, colorB]
   }
 }
