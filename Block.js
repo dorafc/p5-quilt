@@ -9,7 +9,7 @@ class Block{
     this.colors = []              // block color palette
     this.cWeights = cWeights      // weights for the universal color palette
     this.edges = [0, 0, 0, 0]     // initialize with the edges of the block
-    this.neightborColors = true;
+    this.neighborColors = true;
   }   
 
   drawBlock(x, y, dim){
@@ -25,13 +25,14 @@ class Block{
       () => this.recurseBlock(this.x, this.y, this.dimension)
     ]
     
-    if (this.neightborColors){
+    if (this.neighborColors){
+      // console.log('boop')
       this.colors = [this.univColor[0], this.univColor[2]]
+      this.drawEdgeBlock()
     } else {
       this.colors = this.setColors(this.univColor, this.cWeights)
+      this.selectBlock(allowedBlocks)
     }
-
-    this.selectBlock(allowedBlocks)
   }
 
   /*-- UTIL FUNCTIONS --*/
@@ -81,11 +82,108 @@ class Block{
   }
   /*-- /GET FUNCTIONS--*/
 
+  // select a block to draw based on the known edges
+  drawEdgeBlock(){
+    let edgeSort = this.edges.sort()
+    let allowedBlocks = [() => this.drawSquare(this.x, this.y, this.dimension)];
+
+    // first block, any edges
+    if (this.edges.every(e => e == 0 || e == -1)){
+      // console.log('one')
+      allowedBlocks = [ 
+        () => this.drawSquare(this.x, this.y, this.dimension),
+        () => this.drawVertical(this.x, this.y, this.dimension),
+        () => this.drawHorizontal(this.x, this.y, this.dimension),
+        () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+        () => this.drawDiagonalRight(this.x, this.y, this.dimension),
+        () => this.drawBothDiagonal(this.x, this.y, this.dimension),
+        () => this.drawBothStraight(this.x, this.y, this.dimension),
+      ]
+    } else
+    // one solid color
+    if ((typeof edgeSort[0] === 'string') && (typeof edgeSort[1] === 'number') && (typeof edgeSort[3] === 'number')){
+      // console.log('one solid color')
+      let newColors = [edgeSort[0], this.colors.find((e) => e !== edgeSort[0])]
+      this.colors = newColors
+      allowedBlocks = [ 
+        () => this.drawSquare(this.x, this.y, this.dimension),
+        () => this.drawVertical(this.x, this.y, this.dimension),
+        () => this.drawHorizontal(this.x, this.y, this.dimension),
+        () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+        () => this.drawDiagonalRight(this.x, this.y, this.dimension),
+        () => this.drawBothStraight(this.x, this.y, this.dimension),
+      ]
+    } else 
+    // one dual color
+    if ((typeof edgeSort[0] === 'object') && (typeof edgeSort[1] === 'number') && (typeof edgeSort[3] === 'number')){
+      // console.log('one dual color')
+      this.colors = edgeSort[0]
+      allowedBlocks = [ 
+        () => this.drawVertical(this.x, this.y, this.dimension),
+        () => this.drawHorizontal(this.x, this.y, this.dimension),
+        () => this.drawBothStraight(this.x, this.y, this.dimension),
+      ]
+    } else 
+    // two solid colors
+    if ((typeof edgeSort[0] === 'string') && (typeof edgeSort[1] === 'string')){
+      if (edgeSort[0] === edgeSort[1]){
+        // console.log('two solid colors: SAME')
+        this.colors = [edgeSort[0], this.colors.find((e) => e !== edgeSort[0])]
+        allowedBlocks = [ 
+          () => this.drawSquare(this.x, this.y, this.dimension),
+          () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+          () => this.drawDiagonalRight(this.x, this.y, this.dimension),
+        ]
+      } else {
+        // console.log('two solid colors: DIFF')
+        this.colors = [edgeSort[0], edgeSort[1]]
+        allowedBlocks = [ 
+          () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+          () => this.drawDiagonalRight(this.x, this.y, this.dimension),
+          () => this.drawBothDiagonal(this.x, this.y, this.dimension),
+        ]
+      }
+    } else 
+    // two dual colors
+    if ((typeof edgeSort[0] === 'object') && (typeof edgeSort[1] === 'object')){
+      if (edgeSort[0][0] === edgeSort[1][0]){
+        // console.log('two dual colors: SAME')
+        this.colors = edgeSort[0]
+        allowedBlocks = [ 
+          () => this.drawBothStraight(this.x, this.y, this.dimension),
+        ]
+      } else {
+        // console.log('two dual colors: DIFF')
+        allowedBlocks = [ 
+          () => this.drawBothStraight(this.x, this.y, this.dimension),
+        ]
+      }
+    } else 
+    // one solid, one dual
+    if ((typeof edgeSort[0] === 'string' && typeof edgeSort[1] === 'object') || (typeof edgeSort[0] === 'object' && typeof edgeSort[1] === 'string')){
+      // console.log('both types')
+      if (typeof edgeSort[0] === 'string'){
+        this.colors = [edgeSort[0], this.colors.find((e) => e !== edgeSort[0])]
+      } else {
+        this.colors = [edgeSort[1], this.colors.find((e) => e !== edgeSort[1  ])]
+      }
+      
+      allowedBlocks = [ 
+        () => this.drawVertical(this.x, this.y, this.dimension),
+        () => this.drawHorizontal(this.x, this.y, this.dimension)
+      ]
+    } else {
+      console.log(edgeSort)
+      console.log("INVALID BLOCK")
+    }
+    // console.log(this.colors)
+    allowedBlocks[parseInt(random(allowedBlocks.length))]()
+  }
+
   // set egdes from neighbors
   setEdges(edges){
     this.edges = edges
   }
-  // determine the symetry of the block
 
   // selected rendered block based on weight
   selectBlock(blocks){
@@ -157,8 +255,8 @@ class Block{
 
   // Single Straight Blocks
   drawVertical(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     rect(x, y, dim/2, dim);
     fill(colorB)
@@ -167,8 +265,8 @@ class Block{
   }
 
   drawHorizontal(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     rect(x, y, dim, dim/2);
     fill(colorB)
@@ -178,8 +276,8 @@ class Block{
 
   // Single Diagonal Blocks
   drawDiagonalRight(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     triangle(x, y, x+dim, y, x+dim, y+dim)
     fill(colorB)
@@ -188,8 +286,8 @@ class Block{
   }
 
   drawDiagonalLeft(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     triangle(x, y, x+dim, y, x, y+dim)
     fill(this.colors[1])
@@ -199,8 +297,8 @@ class Block{
 
   // Double Straight Block
   drawBothStraight(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     rect(x, y, dim/2, dim/2);
     rect(x+dim/2, y+dim/2, dim/2, dim/2);
@@ -212,8 +310,8 @@ class Block{
 
   // Double Diagonal Straight Block
   drawBothDiagonal(x, y, dim){
-    const colorA = this.colors[0]
-    const colorB = this.colors[1]
+    const colorA = this.colors[0].toString()
+    const colorB = this.colors[1].toString()
     fill(colorA)
     triangle(x, y, x+dim, y, x+(dim/2), y+(dim/2))   
     triangle(x, y+dim, x+dim/2, y+dim/2, x+dim, y+dim)

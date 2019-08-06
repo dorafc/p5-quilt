@@ -89,7 +89,7 @@ class Quilt{
         (row+1 <= this.rows-1) ? this.blocks[col][row+1].getTopEdge() : -1,
         (col-1 >= 0) ? this.blocks[col-1][row].getRightEdge() : -1
       ])
-      console.log(this.blocks[col][row].edges)
+      // console.log(this.blocks[col][row].edges)
 
       // draw block
       this.blocks[col][row].drawBlock()

@@ -7,15 +7,15 @@ const blockDimension = 80;
 
 // allowed palette, currently limited to two colors
 const univPalette = ['#fa87a0', '#069c13', '#025949', '#ffda1f','#a163f2', '#4d0c70', '#cccccc', '#c0ffee']
-const colorWeights = [1,1,0,0,0,0,0]
-const allowTwoFabrics = true;
+const colorWeights = [1,1,1,10,1,0,0]
+const allowTwoFabrics = false;
 
 // gradient info
 const hasGradient = false;
-const gradientColors = [0, '#333a33']
+const gradientColors = [3, '#333a33']
 
 // weights for each block type
-const weights = [[1,1,1,1,1,1,1,0],
+const weights = [[1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,0]]
 
@@ -27,7 +27,7 @@ let quiltObj;
 // ---------------
 
 function setup() {
-  frameRate(24)
+  frameRate(12)
   createCanvas(colBlockNum*blockDimension, rowBlockNum*blockDimension);
   // background('red')
   
