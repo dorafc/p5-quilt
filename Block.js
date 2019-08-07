@@ -1,15 +1,15 @@
 class Block{
-  constructor(palette, cWeights, twoFab, x, y, dim, weights){
+  constructor(palette, cWeights, twoFab, x, y, dim, weights, colors){
     this.univColor = palette      // universal color palette for the entire quilt
     this.twoFab = twoFab          // allow two fabrics of the same color per square
     this.x = x                    // x coordinate of the origin
     this.y = y                    // y coordinate of the origin
     this.dimension = dim          // dimension of the block
     this.weights = weights        // weights of how often a block will be selected
-    this.colors = []              // block color palette
+    this.colors = colors              // block color palette
     this.cWeights = cWeights      // weights for the universal color palette
     this.edges = [0, 0, 0, 0]     // initialize with the edges of the block
-    this.neighborColors = true;
+    this.neighborColors = false;
   }   
 
   drawBlock(x, y, dim){
@@ -26,11 +26,10 @@ class Block{
     ]
     
     if (this.neighborColors){
-      // console.log('boop')
-      this.colors = [this.univColor[0], this.univColor[2]]
+      // this.colors = [this.univColor[0], this.univColor[2]]
       this.drawEdgeBlock()
     } else {
-      this.colors = this.setColors(this.univColor, this.cWeights)
+      // this.colors = this.setColors(this.univColor, this.cWeights)
       this.selectBlock(allowedBlocks)
     }
   }
@@ -105,6 +104,7 @@ class Block{
     // one solid color
     if ((typeof edgeSort[0] === 'string') && (typeof edgeSort[1] === 'number') && (typeof edgeSort[3] === 'number')){
       console.log('one solid color')
+      console.log(this.edges, this.colors)
       if (edgeSort[0] !== this.colors[0]){
         let newColors = [this.colors[1], this.colors[0]]
         this.colors = newColors
@@ -241,10 +241,7 @@ class Block{
           (j*newDim) + this.y, 
           newDim, 
           this.weights.slice(1),
-          this.rNum,
-          this.totalRows,
-          this.hasGrad,
-          this.gradColor
+          this.setColors(this.univColor, this.cWeights)
         )
         block.drawBlock()
         // blocks.push(block)

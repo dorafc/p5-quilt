@@ -27,7 +27,7 @@ let quiltObj;
 // ---------------
 
 function setup() {
-  frameRate(2)
+  frameRate(24)
   createCanvas(colBlockNum*blockDimension, rowBlockNum*blockDimension);
   // background('red')
   
@@ -42,7 +42,8 @@ function setup() {
     allowTwoFabrics,
     hasGradient,
     gradientColors,
-    weights
+    weights,
+    neighborColors
   )
   
   quiltObj.initQuilt()

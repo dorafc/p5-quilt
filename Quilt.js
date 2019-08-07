@@ -1,5 +1,5 @@
 class Quilt{
-  constructor(rows, columns, dim, colors, colorWeights, allowTwoFabrics, hasGrad, gradColors, bWeights){
+  constructor(rows, columns, dim, colors, colorWeights, allowTwoFabrics, hasGrad, gradColors, bWeights, neighborColors){
     // dimensions
     this.rows = rows
     this.columns = columns
@@ -27,6 +27,9 @@ class Quilt{
     // blocks
     this.blocks = []
 
+    // pick blocks based on neighboring colors
+    this.neighborColors = neighborColors
+
     // sets for rendering
     this.hasDrawn = new Set()
     this.canDraw = new Set()
@@ -36,6 +39,41 @@ class Quilt{
     this.seedColumn = parseInt(random(this.columns))
   }  
 
+  /*-- UTIL FUNCTIONS --*/
+  // determine random number from weights
+  getRandomWeight(weights){
+    let weightSum = 0;
+    weights.forEach(weight => weightSum += weight)
+
+    return parseInt(random(weightSum)) + 1;
+  }
+
+  // get a weighted value from the array
+  getWeightedVal(weights, num){
+    // selected index
+    let check = -1;
+
+    // current summed weight
+    let numSum = 0;
+
+    // iterate over array
+    for (let i = 0; i < weights.length; i++){
+      numSum = weights[i] + numSum;
+      if (num - numSum <= 0){
+        check = i
+        i = weights.length
+      }
+    }
+    return check;
+  }
+
+  // converts an array to an array-esque string
+  convertToString(a, b){
+    return '['+ new String(a) + ',' + new String(b) +']'
+  }
+  /*-- /UTIL FUNCTIONS --*/
+
+  // generate gradient
   generateGradientColors(colorA, colorB, rows){
     let gradient = []
     gradient.push(colorA)
@@ -44,6 +82,33 @@ class Quilt{
     }
     gradient.push(colorB)
     return gradient
+  }
+
+  // determine block color pallete
+  setColors(palette, weights){
+    colorMode(HSB)
+    let checkA = this.getRandomWeight(weights)
+    let indexA = this.getWeightedVal(weights, checkA)
+    let colorA = palette[indexA]
+    
+    let newWeights = weights.slice()
+    // allow blocks to contain two fabrics of the same color
+    if (!this.twoFab) {      
+      newWeights[indexA] = 0;
+    }
+    
+    let checkB = this.getRandomWeight(newWeights)
+    let indexB = this.getWeightedVal(newWeights, checkB)
+    let colorB = palette[indexB]
+
+    if (colorA === colorB){
+      if(random() > .5){
+        colorB = color(hue(colorA), saturation(colorA), brightness(colorA)-10)
+      } else {
+        colorA = color(hue(colorB), saturation(colorB), brightness(colorB)-10)
+      }  
+    }
+    return ([colorA, colorB])
   }
 
   initQuilt(){
@@ -59,6 +124,14 @@ class Quilt{
           rowPalette[this.gradientColors[0]] = this.gradient[j]
         }
 
+        // generate color palette for the block
+        let colors = []
+        if (this.neighborColors){
+          colors = [this.palette[0], this.palette[2]]
+        } else {
+          colors = this.setColors(this.palette, this.colorWeights)
+        }
+
         let block = new Block(
           rowPalette, 
           this.colorWeights,
@@ -66,7 +139,8 @@ class Quilt{
           i*this.dimensions, 
           j*this.dimensions, 
           this.dimensions, 
-          this.blockWeights
+          this.blockWeights,
+          colors
         )
         this.blocks[i].push(block)
       }
@@ -118,10 +192,6 @@ class Quilt{
         this.canDraw.add(this.convertToString(col-1, row))
       }
     }
-  }
-
-  convertToString(a, b){
-    return '['+ new String(a) + ',' + new String(b) +']'
   }
 }
 
