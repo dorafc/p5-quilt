@@ -26,6 +26,14 @@ class Quilt{
 
     // blocks
     this.blocks = []
+
+    // sets for rendering
+    this.hasDrawn = new Set()
+    this.canDraw = new Set()
+
+    // seed block
+    this.seedRow = parseInt(random(this.rows))
+    this.seedColumn = parseInt(random(this.columns))
   }  
 
   generateGradientColors(colorA, colorB, rows){
@@ -39,13 +47,6 @@ class Quilt{
   }
 
   initQuilt(){
-    // sets for rendering
-    const hasDrawn = new Set()
-    const canDraw = new Set()
-
-    // seed block
-    const seedRow = parseInt(random(this.rows))
-    const seedColumn = parseInt(random(this.columns))
 
     for(let i = 0; i < this.columns; i++){
       this.blocks[i] = new Array();
@@ -72,42 +73,50 @@ class Quilt{
     }
 
     // add seed block to set of blocks to draw
-    canDraw.add(this.convertToString(seedColumn, seedRow))
+    if (this.hasDrawn.size === 0){
+      this.canDraw.add(this.convertToString(this.seedColumn, this.seedRow))
+    }
+    
 
+    
+  }
+
+  renderBlock(){
     // get iterators of set to draw
-    let drawNext = canDraw.entries()
+    // let drawNext = this.canDraw.entries()
+    let drawNext = this.canDraw.values()
 
-    for (let [next] of drawNext) {
+    // for (let [next] of drawNext) {
+    let next = drawNext.next().value
+    if (next){
       let [col, row] = eval(next)
+      
       // remove from canDraw set
-      canDraw.delete(next)
+      this.canDraw.delete(next)
 
-      // get edges from neighbors
+      // // get edges from neighbors
       this.blocks[col][row].setEdges([
         (row-1 >= 0) ? this.blocks[col][row-1].getBottomEdge() : -1,
-        (col+1 <= this.columns-1) ? this.blocks[col+1][row].getLeftEdge() : -1,
-        (row+1 <= this.rows-1) ? this.blocks[col][row+1].getTopEdge() : -1,
+        (col+1 < this.columns) ? this.blocks[col+1][row].getLeftEdge() : -1,
+        (row+1 < this.rows) ? this.blocks[col][row+1].getTopEdge() : -1,
         (col-1 >= 0) ? this.blocks[col-1][row].getRightEdge() : -1
       ])
-      // console.log(this.blocks[col][row].edges)
-
-      // draw block
+      // // draw block
       this.blocks[col][row].drawBlock()
-      hasDrawn.add(next)
+      this.hasDrawn.add(next)
       
-      if (!hasDrawn.has(this.convertToString(col, row-1)) && row-1 >= 0){
-        canDraw.add(this.convertToString(col, row-1))
+      if (!this.hasDrawn.has(this.convertToString(col, row-1)) && row-1 >= 0){
+        this.canDraw.add(this.convertToString(col, row-1))
       }
-      if (!hasDrawn.has(this.convertToString(col, row+1)) && row+1 <= this.rows-1){
-        canDraw.add(this.convertToString(col, row+1))
+      if (!this.hasDrawn.has(this.convertToString(col, row+1)) && row+1 < this.rows){
+        this.canDraw.add(this.convertToString(col, row+1))
       }
-      if (!hasDrawn.has(this.convertToString(col+1, row)) && col+1 <= this.columns-1){
-        canDraw.add(this.convertToString(col+1, row))
+      if (!this.hasDrawn.has(this.convertToString(col+1, row)) && col+1 < this.columns){
+        this.canDraw.add(this.convertToString(col+1, row))
       }
-      if (!hasDrawn.has(this.convertToString(col-1, row)) && col-1 >= 0){
-        canDraw.add(this.convertToString(col-1, row))
-      }   
-      // console.log(canDraw.size)     
+      if (!this.hasDrawn.has(this.convertToString(col-1, row)) && col-1 >= 0){
+        this.canDraw.add(this.convertToString(col-1, row))
+      }
     }
   }
 

@@ -20,14 +20,14 @@ const weights = [[1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,0]]
 
 // colors determined by neighbors
-const neighborColors = true;
+const neighborColors = false;
 
 let quiltObj;
 
 // ---------------
 
 function setup() {
-  frameRate(12)
+  frameRate(2)
   createCanvas(colBlockNum*blockDimension, rowBlockNum*blockDimension);
   // background('red')
   
@@ -46,8 +46,11 @@ function setup() {
   )
   
   quiltObj.initQuilt()
+  // quiltObj.renderBlock()
+  // quiltObj.renderBlock()
 }
 
 function draw() {
   // quiltObj.initQuilt()
+  quiltObj.renderBlock()
 }
