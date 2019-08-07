@@ -85,21 +85,33 @@ class Quilt{
   }
 
   // determine block color pallete
-  setColors(palette, weights){
+  setColors(palette, weights, row){
     colorMode(HSB)
     let checkA = this.getRandomWeight(weights)
     let indexA = this.getWeightedVal(weights, checkA)
-    let colorA = palette[indexA]
+    let colorA
     
-    let newWeights = weights.slice()
+    if (indexA === this.gradientColors[0] && this.hasGradient){
+      colorA = this.gradient[row]
+    } else {
+      colorA = palette[indexA]
+    }
+
     // allow blocks to contain two fabrics of the same color
+    let newWeights = weights.slice()
     if (!this.twoFab) {      
       newWeights[indexA] = 0;
     }
     
     let checkB = this.getRandomWeight(newWeights)
     let indexB = this.getWeightedVal(newWeights, checkB)
-    let colorB = palette[indexB]
+    let colorB
+    
+    if (indexB === this.gradientColors[0] && this.hasGradient){
+      colorB = this.gradient[row]
+    } else {
+      colorB = palette[indexB]
+    }
 
     if (colorA === colorB){
       if(random() > .5){
@@ -129,7 +141,7 @@ class Quilt{
         if (this.neighborColors){
           colors = [this.palette[0], this.palette[2]]
         } else {
-          colors = this.setColors(this.palette, this.colorWeights)
+          colors = this.setColors(this.palette, this.colorWeights, j)
         }
 
         let block = new Block(
@@ -140,7 +152,8 @@ class Quilt{
           j*this.dimensions, 
           this.dimensions, 
           this.blockWeights,
-          colors
+          colors,
+          this.neighborColors
         )
         this.blocks[i].push(block)
       }

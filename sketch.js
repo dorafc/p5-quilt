@@ -15,12 +15,12 @@ const hasGradient = false;
 const gradientColors = [3, '#333a33']
 
 // weights for each block type
-const weights = [[1,1,1,1,1,1,1,1],
+const weights = [[1,1,1,1,1,1,1,0],
                  [1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,0]]
 
 // colors determined by neighbors
-const neighborColors = false;
+const neighborColors = true;
 
 let quiltObj;
 

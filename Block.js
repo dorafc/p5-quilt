@@ -1,15 +1,15 @@
 class Block{
-  constructor(palette, cWeights, twoFab, x, y, dim, weights, colors){
-    this.univColor = palette      // universal color palette for the entire quilt
-    this.twoFab = twoFab          // allow two fabrics of the same color per square
-    this.x = x                    // x coordinate of the origin
-    this.y = y                    // y coordinate of the origin
-    this.dimension = dim          // dimension of the block
-    this.weights = weights        // weights of how often a block will be selected
+  constructor(palette, cWeights, twoFab, x, y, dim, weights, colors, neighbors){
+    this.univColor = palette          // universal color palette for the entire quilt
+    this.twoFab = twoFab              // allow two fabrics of the same color per square
+    this.x = x                        // x coordinate of the origin
+    this.y = y                        // y coordinate of the origin
+    this.dimension = dim              // dimension of the block
+    this.weights = weights            // weights of how often a block will be selected
     this.colors = colors              // block color palette
-    this.cWeights = cWeights      // weights for the universal color palette
-    this.edges = [0, 0, 0, 0]     // initialize with the edges of the block
-    this.neighborColors = false;
+    this.cWeights = cWeights          // weights for the universal color palette
+    this.edges = [0, 0, 0, 0]         // initialize with the edges of the block
+    this.neighborColors = neighbors   // show if neighbors are related or not
   }   
 
   drawBlock(x, y, dim){
@@ -241,7 +241,8 @@ class Block{
           (j*newDim) + this.y, 
           newDim, 
           this.weights.slice(1),
-          this.setColors(this.univColor, this.cWeights)
+          this.setColors(this.univColor, this.cWeights),
+          this.neighborColors
         )
         block.drawBlock()
         // blocks.push(block)
