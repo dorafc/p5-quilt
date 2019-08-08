@@ -83,108 +83,17 @@ class Block{
 
   // select a block to draw based on the known edges
   drawEdgeBlock(){
-    let edgeSort = this.edges.slice()
-    edgeSort.sort()
-    let allowedBlocks = [];
-    
-    // first block, any edges
-    if (this.edges.every(e => e == 0 || e == -1)){
-      console.log('no edges')
-      allowedBlocks = [ 
-        () => this.drawSquare(this.x, this.y, this.dimension),
-        // () => this.drawVertical(this.x, this.y, this.dimension),
-        // () => this.drawHorizontal(this.x, this.y, this.dimension),
-        () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
-        () => this.drawDiagonalRight(this.x, this.y, this.dimension),
-        // () => this.drawBothDiagonal(this.x, this.y, this.dimension),
-        // () => this.drawBothStraight(this.x, this.y, this.dimension),
-      ]
-      allowedBlocks[parseInt(random(allowedBlocks.length))]()
-    } else
-    // one solid color
-    if ((typeof edgeSort[0] === 'string') && (typeof edgeSort[1] === 'number') && (typeof edgeSort[3] === 'number')){
-      console.log('one solid color')
-      console.log(this.edges, this.colors)
-      if (edgeSort[0] !== this.colors[0]){
-        let newColors = [this.colors[1], this.colors[0]]
-        this.colors = newColors
-      }
-      allowedBlocks = [ 
-        () => this.drawSquare(this.x, this.y, this.dimension),
-        // () => this.drawVertical(this.x, this.y, this.dimension),
-        // () => this.drawHorizontal(this.x, this.y, this.dimension),
-        () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
-        () => this.drawDiagonalRight(this.x, this.y, this.dimension),
-        // () => this.drawBothStraight(this.x, this.y, this.dimension),
-      ]
-      allowedBlocks[parseInt(random(allowedBlocks.length))]()
-    } else 
-    // one dual color
-    if ((typeof edgeSort[0] === 'object') && (typeof edgeSort[1] === 'number') && (typeof edgeSort[3] === 'number')){
-      // console.log('one dual color')
-      allowedBlocks = [ 
-        // () => this.drawVertical(this.x, this.y, this.dimension),
-        // () => this.drawHorizontal(this.x, this.y, this.dimension),
-        // () => this.drawBothStraight(this.x, this.y, this.dimension),
-      ]
-      allowedBlocks[parseInt(random(allowedBlocks.length))]()
-    } else 
-    // two solid colors
-    if ((typeof edgeSort[0] === 'string') && (typeof edgeSort[1] === 'string')){
-      if (edgeSort[0] === edgeSort[1]){
-        console.log('two solid colors: SAME')
-        if (edgeSort[0] !== this.colors[0]){
-          let newColors = [this.colors[1], this.colors[0]]
-          this.colors = newColors
-        }
-        allowedBlocks = [ 
-          () => this.drawSquare(this.x, this.y, this.dimension),
-          () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
-          () => this.drawDiagonalRight(this.x, this.y, this.dimension),
-        ]
-        allowedBlocks[parseInt(random(allowedBlocks.length))]()
-      } else {
-        console.log('two solid colors: DIFF')
-        // console.log(this.colors, [edgeSort[0], edgeSort[1]])
-        this.colors = [edgeSort[0], edgeSort[1]]
-        allowedBlocks = [ 
-          () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
-          () => this.drawDiagonalRight(this.x, this.y, this.dimension),
-          // () => this.drawBothDiagonal(this.x, this.y, this.dimension),
-        ]
-        allowedBlocks[parseInt(random(allowedBlocks.length))]()
-      }
-    } else 
-    // two dual colors
-    if ((typeof edgeSort[0] === 'object') && (typeof edgeSort[1] === 'object')){
-      if (edgeSort[0][0] === edgeSort[1][0]){
-        // console.log('two dual colors: SAME')
-        allowedBlocks = [ 
-          // () => this.drawBothStraight(this.x, this.y, this.dimension),
-        ]
-        allowedBlocks[parseInt(random(allowedBlocks.length))]()
-      } else {
-        // console.log('two dual colors: DIFF')
-        allowedBlocks = [ 
-          // () => this.drawBothStraight(this.x, this.y, this.dimension),
-        ]
-        allowedBlocks[parseInt(random(allowedBlocks.length))]()
-      }
-    } else 
-    // one solid, one dual
-    if ((typeof edgeSort[0] === 'string' && typeof edgeSort[1] === 'object') || (typeof edgeSort[0] === 'object' && typeof edgeSort[1] === 'string')){
-      // console.log('both types')
-      allowedBlocks = [ 
-        () => this.drawVertical(this.x, this.y, this.dimension),
-        () => this.drawHorizontal(this.x, this.y, this.dimension)
-      ]
-      allowedBlocks[parseInt(random(allowedBlocks.length))]()
-    } else {
-      console.log(edgeSort)
-      console.log("INVALID BLOCK")
-    }
-    // console.log(this.colors)
-    // console.log(this.edges)    
+    let allowedBlocks = [ 
+      () => this.drawSquare(this.x, this.y, this.dimension),
+      () => this.drawDiagonalLeft(this.x, this.y, this.dimension),
+      () => this.drawDiagonalRight(this.x, this.y, this.dimension)
+    ]
+    let hasRendered = false;
+
+    do {
+      hasRendered = random(allowedBlocks)()
+      // console.log(hasRendered)
+    } while (!hasRendered)
   }
 
   // set egdes from neighbors
@@ -252,11 +161,173 @@ class Block{
 
   // single block wit no subdivisions
   drawSquare(x, y, dim){
-    const color = this.colors[0]
-    fill(color)
+    let colorA
+    if (this.neighborColors){
+      let edgeSort = this.edges.slice()
+      edgeSort = edgeSort.sort()
+
+      if (typeof edgeSort[0] !== 'string'){
+        colorA = random(this.colors)
+      } else 
+      if (typeof edgeSort[0] === 'string' && typeof edgeSort[1] !== 'string'){
+        colorA = edgeSort[0]
+      } else
+      if (typeof edgeSort[0] === 'string' && edgeSort[0] === edgeSort[1]){
+        colorA = edgeSort[0]
+      } else {
+        return false
+      }
+    } else {
+      colorA = random(this.colors)
+    }
+    
+    
+    fill(colorA)
     rect(x, y, dim, dim)
-    this.edges = [color,color,color,color]
+    this.edges = [colorA,colorA,colorA,colorA]
+    if (this.neighborColors){
+      return true
+    }
   }
+
+  drawDiagonalLeft(x, y, dim){
+    let edgeSort = this.edges.slice()
+    edgeSort = edgeSort.sort()
+    let colorA, colorB
+
+    if (this.neighborColors){
+      // no known edges
+      if (typeof edgeSort[0] !== 'string'){
+        colorA = random(this.colors).toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      } else
+
+      // only one edge
+      if (typeof edgeSort[0] === 'string' && typeof edgeSort[1] !== 'string'){
+        if (typeof this.edges[0] === 'string' || typeof this.edges[3] === 'string'){
+          colorA = edgeSort[0].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else {
+          colorB = edgeSort[0].toString()
+          colorA = this.colors[this.colors.findIndex(e => e !== colorB)].toString()
+        }
+      } else
+      
+      // two edges are the same
+      if ((edgeSort[0] === edgeSort[1]) && (this.edges[0] === this.edges[3]) && (typeof this.edges[0] === 'string')){
+        colorA = edgeSort[0].toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      } else 
+      if ((edgeSort[0] === edgeSort[1]) && (this.edges[1] === this.edges[2]) && (typeof this.edges[1] === 'string')){
+        colorB = edgeSort[0].toString()
+        colorA = this.colors[this.colors.findIndex(e => e !== colorB)].toString()
+      } else
+
+      // both edges are different
+      if ((typeof this.edges[0] === 'string' && typeof this.edges[3] !== 'string') && (typeof this.edges[1] === 'string' && this.edges[1] !== this.edges[0])){
+        colorA = this.edges[0].toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      } else
+      if ((typeof this.edges[0] === 'string' && typeof this.edges[3] !== 'string') && (typeof this.edges[2] === 'string' && this.edges[2] !== this.edges[0])){
+        colorA = this.edges[0].toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      } else
+      if ((typeof this.edges[3] === 'string' && typeof this.edges[0] !== 'string') && (typeof this.edges[1] === 'string' && this.edges[1] !== this.edges[3])){
+        colorA = this.edges[3].toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      } else
+      if ((typeof this.edges[3] === 'string' && typeof this.edges[0] !== 'string') && (typeof this.edges[2] === 'string' && this.edges[2] !== this.edges[3])){
+        colorA = this.edges[3].toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      }
+
+      else {
+        return false
+      }
+    } else {
+      colorA = random(this.colors).toString()
+      colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+    }
+    
+    fill(colorA)
+    triangle(x, y, x+dim, y, x, y+dim)
+    fill(colorB)
+    triangle(x, y+dim, x+dim, y+dim, x+dim, y)
+    this.edges = [colorA, colorB, colorB, colorA]
+
+    if (this.neighborColors){
+      return true;
+    }
+  }
+
+    // Single Diagonal Blocks
+    drawDiagonalRight(x, y, dim){
+      let edgeSort = this.edges.slice()
+      edgeSort = edgeSort.sort()
+      let colorA, colorB
+      
+      if (this.neighborColors){
+        // no known edges
+        if (typeof edgeSort[0] !== 'string'){
+          colorA = random(this.colors).toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else
+
+        // one known edge
+        if (typeof edgeSort[0] === 'string' && typeof edgeSort[1] !== 'string'){
+          if (typeof this.edges[0] === 'string' || typeof this.edges[1] === 'string'){
+            colorA = edgeSort[0].toString()
+            colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+          } else {
+            colorB = edgeSort[0].toString()
+            colorA = this.colors[this.colors.findIndex(e => e !== colorB)].toString()
+          }
+        } else
+
+        // both edges are the same
+        if ((typeof this.edges[0] === 'string' && typeof this.edges[1] === 'string') && (this.edges[0] === this.edges[1])){
+          colorA = this.edges[0].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else 
+        if ((typeof this.edges[2] === 'string' && typeof this.edges[3] === 'string') && (this.edges[2] === this.edges[3])){
+          colorB = this.edges[2].toString()
+          colorA = this.colors[this.colors.findIndex(e => e !== colorB)].toString()
+        } else
+
+        // both edges are different
+        if ((typeof this.edges[0] === 'string' && typeof this.edges[1] !== 'string') && (typeof this.edges[2] === 'string' && this.edges[2] !== this.edges[0])){
+          colorA = this.edges[0].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else
+        if ((typeof this.edges[0] === 'string' && typeof this.edges[1] !== 'string') && (typeof this.edges[3] === 'string' && this.edges[3] !== this.edges[0])){
+          colorA = this.edges[0].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else
+        if ((typeof this.edges[1] === 'string' && typeof this.edges[0] !== 'string') && (typeof this.edges[2] === 'string' && this.edges[2] !== this.edges[1])){
+          colorA = this.edges[1].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        } else
+        if ((typeof this.edges[1] === 'string' && typeof this.edges[0] !== 'string') && (typeof this.edges[3] === 'string' && this.edges[3] !== this.edges[1])){
+          colorA = this.edges[1].toString()
+          colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+        }
+
+        else {
+          return false
+        }
+      } else {
+        colorA = random(this.colors).toString()
+        colorB = this.colors[this.colors.findIndex(e => e !== colorA)].toString()
+      }
+    
+      fill(colorA)
+      triangle(x, y, x+dim, y, x+dim, y+dim)
+      fill(colorB)
+      triangle(x, y, x, y+dim, x+dim, y+dim)
+      this.edges = [colorA, colorA, colorB, colorB]
+
+      return true;
+    }
 
   // Single Straight Blocks
   drawVertical(x, y, dim){
@@ -279,26 +350,7 @@ class Block{
     this.edges = [colorA, [colorA, colorB], colorB, [colorB,colorA]]
   }
 
-  // Single Diagonal Blocks
-  drawDiagonalRight(x, y, dim){
-    const colorA = this.colors[0].toString()
-    const colorB = this.colors[1].toString()
-    fill(colorA)
-    triangle(x, y, x+dim, y, x+dim, y+dim)
-    fill(colorB)
-    triangle(x, y, x, y+dim, x+dim, y+dim)
-    this.edges = [colorA, colorA, colorB, colorB]
-  }
 
-  drawDiagonalLeft(x, y, dim){
-    const colorA = this.colors[0].toString()
-    const colorB = this.colors[1].toString()
-    fill(colorA)
-    triangle(x, y, x+dim, y, x, y+dim)
-    fill(this.colors[1])
-    triangle(x, y+dim, x+dim, y+dim, x+dim, y)
-    this.edges = [colorA, colorB, colorB, colorA]
-  }
 
   // Double Straight Block
   drawBothStraight(x, y, dim){
