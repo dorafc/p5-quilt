@@ -99,7 +99,7 @@ class Quilt{
 
     // allow blocks to contain two fabrics of the same color
     let newWeights = weights.slice()
-    if (!this.twoFab) {      
+    if (!this.allowTwoFabrics) {      
       newWeights[indexA] = 0;
     }
     
